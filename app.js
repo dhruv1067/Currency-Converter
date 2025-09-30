@@ -1,22 +1,22 @@
-const base_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
+const base_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
 
 const dropdowns = document.querySelectorAll(".dropdown select");
 const btn = document.querySelector("form button");
 const fromCurr = document.querySelector(".from select");
 const toCurr = document.querySelector(".to select");
-const msg = document.querySelector(",msg");
+const msg = document.querySelector(".msg");
 
 for (let select of dropdowns){
     for (currCode in countryList){
         let newOption = document.createElement("option");
         newOption.innerText = currCode;
         newOption.value = currCode;
-        if (select.name === "to" && currCode === "USD"){
+        if (select.name === "from" && currCode === "USD"){
             newOption.selected = "selected";
         }else if (select.name === "to" && currCode === "INR"){
             newOption.selected = "selected";
         }
-        select.apppend(newOption);
+        select.appendChild(newOption);
     }
     select.addEventListener("change", (evt) => {
         updateFLag(evt.target);
@@ -30,10 +30,12 @@ const updateExchangeRate = async () => {
         amtVal = 1;
         amount.value = "1";
     }
-    const URL = `${base_url}/${fromCurr.value.toLowerCase()}/${toCurr.value.toLowerCase()}.json`;
+    const URL = `${base_url}/${fromCurr.value.toLowerCase()}.json`;
     let response = await fetch(URL);
     let data = await response.json();
-    let rate = data[toCurr.value.toLowerCase()];
+    let from = fromCurr.value.toLowerCase();
+    let to = toCurr.value.toLowerCase();
+    let rate = data[from][to];
     let finalAmount = amtVal*rate;
     msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
 };
@@ -41,7 +43,7 @@ const updateExchangeRate = async () => {
 const updateFLag = (ele) => {
     let currCode = ele.value;
     let countryCode = countryList[currCode];
-    let newSrc = "https://flagsapi.com/${countryCode}/flat/64.png";
+    let newSrc = `https://flagsapi.com/${countryCode}/flat/64.png`;
     let img = ele.parentElement.querySelector("img");
     img.src = newSrc;
 };
